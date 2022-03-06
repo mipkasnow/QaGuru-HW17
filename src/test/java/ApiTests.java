@@ -32,7 +32,7 @@ public class ApiTests {
 
 
     @Test
-    void test1(){
+    void checkThatUser2IsJanetWeaverTest() {
         Response response = (Response) given()
                 .when()
                 .get("/api/users/2")
@@ -43,12 +43,15 @@ public class ApiTests {
                 .extract().response();
 
         JsonPath jsonPath = response.jsonPath();
-        String first_name = jsonPath.get("data.first_name");
-        System.out.println(first_name);
+        String firstName = jsonPath.get("data.first_name");
+        String lastName = jsonPath.get("data.last_name");
+
+        assertThat(firstName).isEqualTo("Janet");
+        assertThat(lastName).isEqualTo("Weaver");
     }
 
     @Test
-    void test2(){
+    void checkThatThirdUserIsTobiasTest() {
         Response response = (Response) given()
                 .when()
                 .get("/api/users?page=2")
@@ -58,14 +61,12 @@ public class ApiTests {
 
         JsonPath jsonPath = response.jsonPath();
         List<String> names = jsonPath.get("data.first_name");
-        System.out.println(names.get(2));
 
-        assertThat(names.get(2))
-                .isEqualTo("Tobias");
+        assertThat(names.get(2)).isEqualTo("Tobias");
     }
 
     @Test
-    void test3(){
+    void createUserGeraltWitcherTest(){
         Map<String, String> user = new HashMap<>();
         user.put("name", "Geralt");
         user.put("job", "Witcher");
@@ -82,7 +83,7 @@ public class ApiTests {
 
     @DisplayName("Скачиваем аватар пользователя и сравниваем с локальным изображением")
     @Test
-    void test4() throws Exception{
+    void compareAvatarsTest() throws Exception {
         byte[] image = RestAssured.given()
                 .when()
                 .get("https://reqres.in/img/faces/2-image.jpg")
@@ -103,16 +104,14 @@ public class ApiTests {
             assertThat(new String(is1.readAllBytes()))
                     .contains(new String(is2.readAllBytes()));
         }
-
     }
 
     @Test
-    void test5(){
+    void incorrectLoginTest(){
         Map<String, String> user = new HashMap<>();
-        Map<String, String> error = new HashMap<>();
         user.put("email", "peter@klaven");
+        Map<String, String> error = new HashMap<>();
         error.put("error", "Missing password");
-
 
         given()
                 .contentType(JSON)
